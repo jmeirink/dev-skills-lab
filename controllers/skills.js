@@ -1,11 +1,11 @@
-import { Skills } from "../data/skills.js";
-// Import the Skill model for use with CRUD. Then delete the line above.
+import { Skill } from '../models/skill.js'
 
 function index(req, res) {
   Skill.find({})
   .then(skills => {
     res.render('skills/index', {
-      Skills: Skills
+      skills: skills,
+      time: req.time
     })
   })
   .catch(error => {
@@ -14,6 +14,77 @@ function index(req, res) {
   })
 }
 
+function newSkill(req, res) {
+  res.render('skills/new')
+}
+
+function create(req, res) {
+  Skill.create(req.body)
+  .then(skill => {
+    console.log(skill)
+    res.redirect('/skills')
+  })
+  .catch(error => {
+    console.log(error)
+    res.redirect('/skills')
+  })
+}
+
+function show(req, res) {
+  Skill.findById(req.params.id)
+  .then(skill => {
+    res.render('skills/show', {
+      skill: skill
+    })
+  })
+  .catch(error => {
+    console.log(error)
+    res.redirect('/skills')
+  })
+}
+
+function deleteSkill(req, res) {
+  Skill.findByIdAndDelete(req.params.id)
+  .then(todo => {
+    res.redirect('/skills')
+  })
+  .catch(error => {
+    console.log(error)
+    res.redirect('/skills')
+  })
+}
+
+function edit(req, res) {
+  Skill.findById(req.params.id)
+  .then(skill => {
+    res.render('skills/edit', {
+      skill: skill
+    })
+  })
+  .catch(error => {
+    console.log(error)
+    res.redirect('/skills')
+  })
+}
+
+function update(req, res) {
+  req.body.done = !!req.body.done
+  Skill.findByIdAndUpdate(req.params.id, req.body, {new: true})
+  .then(skill => {
+    res.redirect(`/skills/${skill._id}`)
+  })
+  .catch(error => {
+    console.log(error)
+    res.redirect('/skills')
+  })
+}
+
 export {
-  index
+  index,
+  newSkill as new,
+  create,
+  show,
+  deleteSkill as delete,
+  edit,
+  update
 }
